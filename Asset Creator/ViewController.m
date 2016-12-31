@@ -14,19 +14,24 @@
     NSOpenPanel *openDlg = [NSOpenPanel openPanel];
     [openDlg setCanChooseFiles:YES];
     [openDlg setCanChooseDirectories:NO];
+    [openDlg setAllowsMultipleSelection:NO];
     
     if ([openDlg runModal] == NSModalResponseOK) {
-        for(NSURL *URL in [openDlg URLs]) {
+        for (NSURL *URL in [openDlg URLs]) {
             [self.filePathTextField setStringValue:[URL path]];
         }
     }
 }
 
 - (IBAction)exportButtonPushed:(NSButton *)button {
-    if ([[NSFileManager defaultManager] fileExistsAtPath:self.filePathTextField.stringValue isDirectory:NO]) {
+    CFStringRef extension = (__bridge CFStringRef)[self.filePathTextField.stringValue pathExtension];
+    CFStringRef identifier = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, extension, NULL);
+    
+    if ([[NSFileManager defaultManager] fileExistsAtPath:self.filePathTextField.stringValue isDirectory:NO] && UTTypeConformsTo(identifier, kUTTypeImage)) {
         NSOpenPanel *openDlg = [NSOpenPanel openPanel];
         [openDlg setCanChooseFiles:NO];
         [openDlg setCanChooseDirectories:YES];
+        [openDlg setAllowsMultipleSelection:NO];
         
         NSAlert *deviceAlert = [[NSAlert alloc] init];
         [deviceAlert setMessageText:@"Please Select a Device..."];
@@ -89,7 +94,7 @@
     else {
         NSAlert *errorAlert = [[NSAlert alloc] init];
         [errorAlert setMessageText:@"Error"];
-        [errorAlert setInformativeText:@"The file path chosen or entered is not valid. Please try again."];
+        [errorAlert setInformativeText:@"Either the file path chosen or entered does not exist or the file is not an image. Please try again."];
         [errorAlert addButtonWithTitle:@"OK"];
         [errorAlert runModal];
     }
@@ -112,7 +117,7 @@
     targetImage = [[NSImage alloc] initWithSize:size];
     
     [targetImage lockFocus];
-    [sourceImageRep drawInRect: targetFrame];
+    [sourceImageRep drawInRect:targetFrame];
     [targetImage unlockFocus];
     
     return targetImage;
