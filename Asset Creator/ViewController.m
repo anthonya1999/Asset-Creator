@@ -23,65 +23,75 @@
 }
 
 - (IBAction)exportButtonPushed:(NSButton *)button {
-    NSOpenPanel *openDlg = [NSOpenPanel openPanel];
-    [openDlg setCanChooseFiles:NO];
-    [openDlg setCanChooseDirectories:YES];
-    
-    NSAlert *deviceAlert = [[NSAlert alloc] init];
-    [deviceAlert setMessageText:@"Please Select a Device..."];
-    [deviceAlert setInformativeText:@"In order to properly export your assets, please select which platform you would like your assets for."];
-    [deviceAlert addButtonWithTitle:@"Mac"];
-    [deviceAlert addButtonWithTitle:@"iPhone"];
-    
-    NSModalResponse buttonReturn = [deviceAlert runModal];
-    
-    if ([openDlg runModal] == NSModalResponseOK) {
-        for (NSURL *URL in [openDlg URLs]) {
-            if (buttonReturn == NSAlertFirstButtonReturn) {
-                NSAlert *macConfirmAlert = [[NSAlert alloc] init];
-                [macConfirmAlert setMessageText:@"Confirmation"];
-                [macConfirmAlert setInformativeText:@"The icon sizes for Cocoa applications are: 1024, 512, 256, 128, 64, 32, and 16 pixels. Press \"Continue\" to proceed or \"Cancel\" to go back."];
-                [macConfirmAlert addButtonWithTitle:@"Continue"];
-                [macConfirmAlert addButtonWithTitle:@"Cancel"];
-                
-                NSModalResponse macButtonReturn = [macConfirmAlert runModal];
-                
-                if (macButtonReturn == NSAlertFirstButtonReturn) {
-                    [self saveImageWithSize:1024 atURL:URL];
-                    [self saveImageWithSize:512 atURL:URL];
-                    [self saveImageWithSize:256 atURL:URL];
-                    [self saveImageWithSize:128 atURL:URL];
-                    [self saveImageWithSize:64 atURL:URL];
-                    [self saveImageWithSize:32 atURL:URL];
-                    [self saveImageWithSize:16 atURL:URL];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:self.filePathTextField.stringValue isDirectory:NO]) {
+        NSOpenPanel *openDlg = [NSOpenPanel openPanel];
+        [openDlg setCanChooseFiles:NO];
+        [openDlg setCanChooseDirectories:YES];
+        
+        NSAlert *deviceAlert = [[NSAlert alloc] init];
+        [deviceAlert setMessageText:@"Please Select a Device..."];
+        [deviceAlert setInformativeText:@"In order to properly export your assets, please select which platform you would like your assets for, as well as the the directory to export them to."];
+        [deviceAlert addButtonWithTitle:@"Mac"];
+        [deviceAlert addButtonWithTitle:@"iPhone"];
+        
+        NSModalResponse buttonReturn = [deviceAlert runModal];
+        
+        if ([openDlg runModal] == NSModalResponseOK) {
+            for (NSURL *URL in [openDlg URLs]) {
+                if (buttonReturn == NSAlertFirstButtonReturn) {
+                    NSAlert *macConfirmAlert = [[NSAlert alloc] init];
+                    [macConfirmAlert setMessageText:@"Confirmation"];
+                    [macConfirmAlert setInformativeText:@"The icon sizes for Cocoa applications are: 1024, 512, 256, 128, 64, 32, and 16 pixels. Press \"Continue\" to export your assets in the chosen directory or \"Cancel\" to go back."];
+                    [macConfirmAlert addButtonWithTitle:@"Continue"];
+                    [macConfirmAlert addButtonWithTitle:@"Cancel"];
+                    
+                    NSModalResponse macButtonReturn = [macConfirmAlert runModal];
+                    
+                    if (macButtonReturn == NSAlertFirstButtonReturn) {
+                        [self saveImageWithSize:1024 atURL:URL];
+                        [self saveImageWithSize:512 atURL:URL];
+                        [self saveImageWithSize:256 atURL:URL];
+                        [self saveImageWithSize:128 atURL:URL];
+                        [self saveImageWithSize:64 atURL:URL];
+                        [self saveImageWithSize:32 atURL:URL];
+                        [self saveImageWithSize:16 atURL:URL];
+                    }
                 }
-            }
-            
-            else {
-                NSAlert *iOSConfirmAlert = [[NSAlert alloc] init];
-                [iOSConfirmAlert setMessageText:@"Confirmation"];
-                [iOSConfirmAlert setInformativeText:@"The icon sizes for iOS applications are: 180, 167, 152, 120, 87, 80, 76, 60, 58, 40, 29, and 20 pixels. Press \"Continue\" to proceed or \"Cancel\" to go back."];
-                [iOSConfirmAlert addButtonWithTitle:@"Continue"];
-                [iOSConfirmAlert addButtonWithTitle:@"Cancel"];
                 
-                NSModalResponse iOSButtonReturn = [iOSConfirmAlert runModal];
-                
-                if (iOSButtonReturn == NSAlertFirstButtonReturn) {
-                    [self saveImageWithSize:180 atURL:URL];
-                    [self saveImageWithSize:167 atURL:URL];
-                    [self saveImageWithSize:152 atURL:URL];
-                    [self saveImageWithSize:120 atURL:URL];
-                    [self saveImageWithSize:87 atURL:URL];
-                    [self saveImageWithSize:80 atURL:URL];
-                    [self saveImageWithSize:76 atURL:URL];
-                    [self saveImageWithSize:60 atURL:URL];
-                    [self saveImageWithSize:58 atURL:URL];
-                    [self saveImageWithSize:40 atURL:URL];
-                    [self saveImageWithSize:29 atURL:URL];
-                    [self saveImageWithSize:20 atURL:URL];
+                else {
+                    NSAlert *iOSConfirmAlert = [[NSAlert alloc] init];
+                    [iOSConfirmAlert setMessageText:@"Confirmation"];
+                    [iOSConfirmAlert setInformativeText:@"The icon sizes for iOS applications are: 180, 167, 152, 120, 87, 80, 76, 60, 58, 40, 29, and 20 pixels. Press \"Continue\" to export your assets in the chosen directory or \"Cancel\" to go back."];
+                    [iOSConfirmAlert addButtonWithTitle:@"Continue"];
+                    [iOSConfirmAlert addButtonWithTitle:@"Cancel"];
+                    
+                    NSModalResponse iOSButtonReturn = [iOSConfirmAlert runModal];
+                    
+                    if (iOSButtonReturn == NSAlertFirstButtonReturn) {
+                        [self saveImageWithSize:180 atURL:URL];
+                        [self saveImageWithSize:167 atURL:URL];
+                        [self saveImageWithSize:152 atURL:URL];
+                        [self saveImageWithSize:120 atURL:URL];
+                        [self saveImageWithSize:87 atURL:URL];
+                        [self saveImageWithSize:80 atURL:URL];
+                        [self saveImageWithSize:76 atURL:URL];
+                        [self saveImageWithSize:60 atURL:URL];
+                        [self saveImageWithSize:58 atURL:URL];
+                        [self saveImageWithSize:40 atURL:URL];
+                        [self saveImageWithSize:29 atURL:URL];
+                        [self saveImageWithSize:20 atURL:URL];
+                    }
                 }
             }
         }
+    }
+    
+    else {
+        NSAlert *errorAlert = [[NSAlert alloc] init];
+        [errorAlert setMessageText:@"Error"];
+        [errorAlert setInformativeText:@"The file path chosen or entered is not valid. Please try again."];
+        [errorAlert addButtonWithTitle:@"OK"];
+        [errorAlert runModal];
     }
 }
 
