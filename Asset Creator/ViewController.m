@@ -53,13 +53,7 @@
                     NSModalResponse macButtonReturn = [macConfirmAlert runModal];
                     
                     if (macButtonReturn == NSAlertFirstButtonReturn) {
-                        [self saveImageWithSize:1024 atURL:URL];
-                        [self saveImageWithSize:512 atURL:URL];
-                        [self saveImageWithSize:256 atURL:URL];
-                        [self saveImageWithSize:128 atURL:URL];
-                        [self saveImageWithSize:64 atURL:URL];
-                        [self saveImageWithSize:32 atURL:URL];
-                        [self saveImageWithSize:16 atURL:URL];
+                        [self saveImageWithSizes:@[@1024, @512, @256, @128, @64, @32, @16] atURL:URL];
                     }
                 }
                 
@@ -73,18 +67,7 @@
                     NSModalResponse iOSButtonReturn = [iOSConfirmAlert runModal];
                     
                     if (iOSButtonReturn == NSAlertFirstButtonReturn) {
-                        [self saveImageWithSize:180 atURL:URL];
-                        [self saveImageWithSize:167 atURL:URL];
-                        [self saveImageWithSize:152 atURL:URL];
-                        [self saveImageWithSize:120 atURL:URL];
-                        [self saveImageWithSize:87 atURL:URL];
-                        [self saveImageWithSize:80 atURL:URL];
-                        [self saveImageWithSize:76 atURL:URL];
-                        [self saveImageWithSize:60 atURL:URL];
-                        [self saveImageWithSize:58 atURL:URL];
-                        [self saveImageWithSize:40 atURL:URL];
-                        [self saveImageWithSize:29 atURL:URL];
-                        [self saveImageWithSize:20 atURL:URL];
+                        [self saveImageWithSizes:@[@180, @167, @152, @120, @87, @80, @76, @60, @58, @40, @29, @20] atURL:URL];
                     }
                 }
             }
@@ -100,13 +83,16 @@
     }
 }
 
-- (void)saveImageWithSize:(CGFloat)size atURL:(NSURL *)url {
-    NSImage *oldImage = [[NSImage alloc] initWithContentsOfFile:self.filePathTextField.stringValue];
-    NSImage *newImage = [self resizeImage:oldImage size:NSMakeSize(size / 2, size / 2)];
-    CGImageRef cgRef = [newImage CGImageForProposedRect:NULL context:nil hints:nil];
-    NSBitmapImageRep *newRep = [[NSBitmapImageRep alloc] initWithCGImage:cgRef];
-    NSData *pngData = [newRep representationUsingType:NSPNGFileType properties:@{}];
-    [pngData writeToFile:[NSString stringWithFormat:@"%@/AssetCreatorImage-%zux%zu.png", [url path], CGImageGetWidth(cgRef), CGImageGetHeight(cgRef)] atomically:YES];
+- (void)saveImageWithSizes:(NSArray *)sizes atURL:(NSURL *)url {
+    for (CGFloat i = 0; i < [sizes count]; i++) {
+        NSImage *oldImage = [[NSImage alloc] initWithContentsOfFile:self.filePathTextField.stringValue];
+        CGFloat currentValue = [[sizes objectAtIndex:i] floatValue];
+        NSImage *newImage = [self resizeImage:oldImage size:NSMakeSize(currentValue / 2, currentValue / 2)];
+        CGImageRef cgRef = [newImage CGImageForProposedRect:NULL context:nil hints:nil];
+        NSBitmapImageRep *newRep = [[NSBitmapImageRep alloc] initWithCGImage:cgRef];
+        NSData *pngData = [newRep representationUsingType:NSPNGFileType properties:@{}];
+        [pngData writeToFile:[NSString stringWithFormat:@"%@/AssetCreatorImage-%zux%zu.png", [url path], CGImageGetWidth(cgRef), CGImageGetHeight(cgRef)] atomically:YES];
+    }
 }
 
 - (NSImage *)resizeImage:(NSImage *)sourceImage size:(NSSize)size {
